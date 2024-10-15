@@ -70,7 +70,7 @@ export async function getToken(profile, name, avatarColor) {
         avatar: avatarColor,
         name: name,
         email: profile.email,
-        // moderator: name === 'admin' ? true : false
+        moderator: name === 'admin' ? true : false
       },
       exp: "48 hours",
     }),
@@ -722,16 +722,21 @@ export function formatBytes(bytes) {
   else return (bytes / gigaBytes).toFixed(decimal) + " GB";
 }
 
+
+export const getLocalParticipant = (conference) => {
+  if(!conference) return;
+  const localUser = conference.getLocalUser();
+  return { _identity: { user: localUser }, _id: localUser.id };
+}
+
 export const getParticipants = (conference) => {
-  if (!conference) {
-    return null;
-  }
-  const localUser = conference?.getLocalUser();
+  if(!conference) return;
+  const localUser = getLocalParticipant(conference);
   return [
     ...conference.getParticipantsWithoutHidden(),
     { _identity: { user: localUser }, _id: localUser.id },
   ];
-};
+}
 
 export const muteParticipant = async (conference, participantId, mediaType) => {
   if (!conference) {
@@ -784,6 +789,12 @@ export const getModerator = (conference) => {
   return moderator;
 };
 
+
+export const isModerator = (conference) => {
+  if(!conference) return;
+  return conference.isModerator();
+}
+
 export const isParticipantLocal = (conference, id) => {
   if (!conference && !id) {
     return;
@@ -791,8 +802,31 @@ export const isParticipantLocal = (conference, id) => {
   return conference?.myUserId() === id;
 };
 
+
+export const getRandomParticipant = (conference, id, name ) => {
+  if(!conference) return;
+  const participants = getParticipants(conference);
+  if(participants?.length){
+      if(id){
+          return participants.filter(participant => participant._id === id)[0];
+      }
+      if(name){
+         return participants.filter(participant => participant._identity?.user.name === name)[0];
+      }
+  }
+ return null;
+}
+
+export const getParticipantName = (conference, id) => {
+  if(!conference) return;
+  const participant = getRandomParticipant(conference, id);
+  if(participant){
+      return participant?._identity.user.name
+  }
+ return null;
+}
+
 const handleCollaborartion = () => {
-  console.log("handleCollaborartion");
   let profile = store?.getState()?.profile;
   let media = store?.getState()?.media;
 

@@ -5,7 +5,8 @@ import {
   SET_SPEAKER,
   SET_DEVICES,
   SET_PICTURE_IN_PICTURE,
-  TOGGLE_COLLABORATION
+  TOGGLE_COLLABORATION,
+  ENABLE_PARTICIPANT_MEDIA
 } from "../actions/types";
 
 const initialState = {
@@ -16,7 +17,8 @@ const initialState = {
   resolution: 720,
   aspectRatio: 16/9,
   pictureInPicture: false,
-  collaboration: false
+  collaboration: false,
+  enabledMediaParticipantIds: {}
 };
 
 export const media = (state = initialState, action) => {
@@ -47,15 +49,24 @@ export const media = (state = initialState, action) => {
       return {
         ...state,
       };
-      case SET_PICTURE_IN_PICTURE:
-        state.pictureInPicture = action.payload;
-        return {...state};
-        
-      case TOGGLE_COLLABORATION:
-        state.collaboration = action.payload;
-        return {
-          ...state
-        };
+    case SET_PICTURE_IN_PICTURE:
+      state.pictureInPicture = action.payload;
+      return {...state};
+      
+    case TOGGLE_COLLABORATION:
+      state.collaboration = action.payload;
+      return {
+        ...state
+      };
+    case ENABLE_PARTICIPANT_MEDIA:
+      if(action.payload.media){
+        state.enabledMediaParticipantIds[action.payload.participantId] = {
+          [action.payload.media]: true
+        }
+      }else{
+          delete state.enabledMediaParticipantIds[action.payload.participantId]; 
+      }
+      return {...state};
     default:
       return state;
   }

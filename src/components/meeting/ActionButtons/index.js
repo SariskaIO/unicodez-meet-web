@@ -51,6 +51,7 @@ import {
   GET_PRESENTATION_STATUS,
   RECEIVED_PRESENTATION_STATUS,
   streamingMode,
+  PARTICIPANTS_LOCAL_PROPERTIES,
 } from "../../../constants";
 import {
   setFullScreen,
@@ -69,6 +70,7 @@ import {
   stopStreamingInSRSMode,
   startPipMode,
   exitPipMode,
+  isModerator,
 } from "../../../utils";
 import classNames from "classnames";
 import ParticipantDetails from "../../shared/ParticipantDetails";
@@ -344,6 +346,42 @@ const ActionButtons = ({ dominantSpeakerId }) => {
   const unmuteVideo = async () => {
     await videoTrack?.unmute();
     dispatch(localTrackMutedChanged());
+  };
+
+
+  const muteMedia = async(type) => {
+    if(type === 'audio'){
+      await audioTrack?.mute();
+    }
+    if(type === 'video'){
+      await videoTrack?.mute();
+    }
+    conference.removeLocalParticipantProperty(PARTICIPANTS_LOCAL_PROPERTIES.ENABLE_MEDIA);
+    dispatch(localTrackMutedChanged());
+  }
+
+  const unmuteMedia = async (type) => {
+    if(!isModerator(conference)) {
+      dispatch(
+        showNotification({
+          severity: "info",
+          autoHide: true,
+          message: `Asking to enable ${type}!`,
+        })
+      );
+      conference.setLocalParticipantProperty(PARTICIPANTS_LOCAL_PROPERTIES.ENABLE_MEDIA, type);
+     // setIsRequestingUnmute(true);
+      conference.sendCommand('request-media-unmute', { value: type })
+      conference.removeCommand('request-media-unmute');
+    }else{
+      if(type === 'audio'){
+        await audioTrack?.unmute();
+      }
+      if(type === 'video'){
+        await videoTrack?.unmute();
+      }
+      dispatch(localTrackMutedChanged());
+    }
   };
 
   const muteAll = async (type) => {
@@ -1051,6 +1089,9 @@ const ActionButtons = ({ dominantSpeakerId }) => {
     }
   }, [remoteVideoTrack]);
 
+
+  const isModeratorFlag = conference && isModerator(conference);
+
   return (
     <Box id="footer" className={classes.root}>
       <Hidden smDown>
@@ -1090,32 +1131,35 @@ const ActionButtons = ({ dominantSpeakerId }) => {
         selectedBroadcast={selectedBroadcast}
       />
       <Box className={classes.permissions}>
-        <StyledTooltip
+      <StyledTooltip
           title={
+            isModeratorFlag ?
             audioTrack
               ? audioTrack?.isMuted()
                 ? "Unmute Audio"
                 : "Mute Audio"
               : "Check the mic or Speaker"
+            :
+            "Request to unmute Audio"
           }
         >
           {audioTrack ? (
             audioTrack?.isMuted() ? (
-              <MicOffIcon onClick={unmuteAudio} className={classes.active} />
+              <MicOffIcon onClick={() => unmuteMedia('audio')} className={classes.active} />
             ) : (
-              <MicIcon onClick={muteAudio} />
+              <MicIcon onClick={() => muteMedia('audio')} />
             )
           ) : (
-            <MicIcon onClick={muteAudio} style={{ cursor: "unset" }} />
+            <MicIcon onClick={() => muteMedia('audio')} style={{ cursor: "unset" }} />
           )}
         </StyledTooltip>
         <StyledTooltip
-          title={videoTrack?.isMuted() ? "Unmute Video" : "Mute Video"}
+          title={isModeratorFlag ? videoTrack?.isMuted() ? "Unmute Video" : "Mute Video" : "Request to unmute Video"}
         >
           {videoTrack?.isMuted() ? (
-            <VideocamOffIcon onClick={unmuteVideo} className={classes.active} />
+            <VideocamOffIcon onClick={() => unmuteMedia('video')} className={classes.active} />
           ) : (
-            <VideocamIcon onClick={muteVideo} />
+            <VideocamIcon onClick={() => muteMedia('video')} />
           )}
         </StyledTooltip>
         <StyledTooltip title={"Mute All Cameras"}>

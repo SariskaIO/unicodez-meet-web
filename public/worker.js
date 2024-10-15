@@ -32,7 +32,7 @@ function renderMultipleTracks(canvas, reader1, reader2, user1, user2) {
         // handling of my array containing values and/or errors. 
       })
       .catch(function(err) {
-        console.log("errnjjjjjjjjjjjjj", err.message); // some coding error in handling happened
+        console.log("error in handling", err.message); // some coding error in handling happened
         readChunk();
       });
   }

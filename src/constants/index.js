@@ -129,3 +129,11 @@ export const STREAMING_URL_KEYS = [
     'srt_url',
     'vod_url'
   ]
+
+
+export const PARTICIPANTS_LOCAL_PROPERTIES = {
+    HANDRAISE: "handraise",
+    UNMUTE_AUDIO: "unmuteAudio",
+    UNMUTE_VIDEO: "unmuteVideo",
+    ENABLE_MEDIA: "enableMedia"
+}
