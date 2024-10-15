@@ -72,7 +72,7 @@ const LobbyRoom = ({ tracks }) => {
     },
     permissions: {
       display: "flex",
-      justifyContent: "space-around",
+      justifyContent: "center",
       paddingLeft: "0",
       paddingRight: "0",
       marginTop: "3.73vh",
@@ -100,7 +100,7 @@ const LobbyRoom = ({ tracks }) => {
   
     joinPermissions: {
       display: "flex",
-      justifyContent: "space-around",
+      justifyContent: "center",
       paddingLeft: "0",
       paddingRight: "0",
       marginTop: "3.73vh",
@@ -484,25 +484,25 @@ const LobbyRoom = ({ tracks }) => {
         <Box className={!queryParams.meetingId ? classes.permissions : classes.joinPermissions}>
           {audioTrack?.isMuted() ? (
             <StyledTooltip title="Unmute Audio">
-              <MicOffIcon onClick={unmuteAudioLocalTrack} />
+              <MicOffIcon onClick={unmuteAudioLocalTrack} style={{marginRight: '24px'}} />
             </StyledTooltip>
           ) : (
             <StyledTooltip title="Mute Audio">
-              <MicIcon onClick={muteAudioLocalTrack} />
+              <MicIcon onClick={muteAudioLocalTrack} style={{marginRight: '24px'}} />
             </StyledTooltip>
           )}
           {videoTrack?.isMuted() ? (
             <StyledTooltip title="Unmute Video">
-              <VideocamOffIcon onClick={unmuteVideoLocalTrack} />
+              <VideocamOffIcon onClick={unmuteVideoLocalTrack} style={{marginLeft: '24px'}} />
             </StyledTooltip>
           ) : (
             <StyledTooltip title="Mute Video">
-              <VideocamIcon onClick={muteVideoLocalTrack} />
+              <VideocamIcon onClick={muteVideoLocalTrack} style={{marginLeft: '24px'}} />
             </StyledTooltip>
           )}
-          <StyledTooltip title="Settings">
+          {/* <StyledTooltip title="Settings">
             <SettingsIcon onClick={toggleSettingsDrawer("right", true)} />
-          </StyledTooltip>
+          </StyledTooltip> */}
         </Box>
         <Box className={classes.action}>
           <div className={classes.wrapper}>
