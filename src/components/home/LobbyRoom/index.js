@@ -331,7 +331,10 @@ const LobbyRoom = ({ tracks }) => {
     // const conference = connection.initJitsiConference({
     //   createVADProcessor: SariskaMediaTransport.effects.createRnnoiseProcessor,
     // });
-    const conference = connection.initJitsiConference();
+    const conference = connection.initJitsiConference({
+      startAudioMuted: name !== 'admin',
+      startVideoMuted: name !== 'admin'  
+    });
     tracks.forEach(async track => await conference.addTrack(track));
 
     conference.addEventListener(
@@ -454,7 +457,6 @@ const LobbyRoom = ({ tracks }) => {
     }
     setSettingsState({ ...settingsState, [anchor]: open });
   };
-
   const settingsList = (anchor) => (
     <Box
       onKeyDown={toggleSettingsDrawer(anchor, false)}

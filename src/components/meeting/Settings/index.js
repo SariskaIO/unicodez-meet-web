@@ -434,7 +434,7 @@ const SettingsBox = ({ tracks, onClick }) => {
     handleChange: handleResolutionChange,
     list: resolutionList,
   };
-
+  
   const audioLabel = (
     <Box className={classes.label}>
       <SpeakerIcon className={classes.audioIcon} />
